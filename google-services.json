@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "678080649125",
+    "project_id": "gen-lang-client-0408645008",
+    "storage_bucket": "gen-lang-client-0408645008.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678080649125:android:46af8f955e3ff946c6fa4c",
+        "android_client_info": {
+          "package_name": "com.companyname.auranews"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9iaIijS2MDckfu4Cmm1pucJntikgntaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

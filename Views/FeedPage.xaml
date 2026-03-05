@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:AuraNews.Models"
+             xmlns:viewmodels="clr-namespace:AuraNews.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="AuraNews.Views.FeedPage"
+             Title="AuraNews">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <models:RelativeTimeConverter x:Key="RelativeTimeConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto, Auto, *">
+
+        <ScrollView Grid.Row="0" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="10,5,10,10">
+            <HorizontalStackLayout BindableLayout.ItemsSource="{Binding Categories}" Spacing="15">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Label Text="{Binding .}" FontSize="16" FontAttributes="Bold" VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FeedViewModel}}, Path=SelectedCategory}" Value="{Binding .}">
+                                    <Setter Property="TextColor" Value="DarkCyan" />
+                                    <Setter Property="TextDecorations" Value="Underline" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FeedViewModel}}, Path=SelectedCategory, Converter={toolkit:IsEqualConverter}, ConverterParameter={Binding .}}" Value="False">
+                                    <Setter Property="TextColor" Value="Gray" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FeedViewModel}}, Path=SelectCategoryCommand}" CommandParameter="{Binding .}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" IsVisible="{Binding IsCategorySettingsVisible}" BackgroundColor="#1E1E1E" Stroke="DarkCyan" StrokeThickness="1" Margin="10,0,10,10" Padding="15,10">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="*, Auto">
+                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                    <Label Text="Im 'Allgemein' Feed anzeigen" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                    <Label Text="Deaktiviere dies, um diese Nachrichten nur hier zu lesen." TextColor="Gray" FontSize="11" />
+                </VerticalStackLayout>
+                <Switch Grid.Column="1" IsToggled="{Binding IsIncludedInMainFeed}" OnColor="DarkCyan" VerticalOptions="Center" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2" Padding="10,0,10,0">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" Color="DarkCyan" />
+
+            <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding LoadFeedCommand}" RefreshColor="DarkCyan">
+                <CollectionView x:Name="FeedCollectionView" 
+                                ItemsSource="{Binding VisibleArticles}" 
+                                IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                                ItemsUpdatingScrollMode="KeepScrollOffset">
+                    <CollectionView.EmptyView>
+                        <Label Text="Keine Artikel gefunden. Ziehe nach unten zum Aktualisieren." HorizontalOptions="Center" VerticalOptions="Center" TextColor="Gray" Margin="20"/>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Article">
+                            <Border Margin="0,0,0,15" Padding="15" StrokeThickness="0" BackgroundColor="#1E1E1E">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Offset="0,4" Radius="8" Opacity="0.2" />
+                                </Border.Shadow>
+
+                                <Grid ColumnDefinitions="*, 90" RowDefinitions="Auto, Auto, Auto" ColumnSpacing="15">
+                                    <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="*, Auto" Margin="0,0,0,5">
+                                        <Label Grid.Column="0" Text="{Binding Topic}" TextColor="DarkCyan" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                                        <Label Grid.Column="1" Text="✕ Ausblenden" TextColor="Gray" FontSize="11" VerticalOptions="Center" Padding="10,5">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FeedViewModel}}, Path=BlockTopicCommand}" CommandParameter="{Binding .}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </Grid>
+
+                                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="White" LineBreakMode="TailTruncation" MaxLines="3" />
+
+                                    <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Spacing="8" Margin="0,10,0,0">
+                                        <Label Text="{Binding SourceName}" FontSize="11" TextColor="LightGray" />
+                                        <Label Text="•" FontSize="11" TextColor="Gray" />
+                                        <Label Text="{Binding PublishedDate, Converter={StaticResource RelativeTimeConverter}}" FontSize="11" TextColor="Gray" />
+                                    </HorizontalStackLayout>
+
+                                    <Image Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Source="{Binding ImageUrl}" Aspect="AspectFill" WidthRequest="80" HeightRequest="80" VerticalOptions="Center">
+                                        <Image.Clip>
+                                            <RoundRectangleGeometry CornerRadius="16" Rect="0,0,80,80" />
+                                        </Image.Clip>
+                                    </Image>
+
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FeedViewModel}}, Path=OpenArticleCommand}" CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+
+            <Button Text="{Binding NewArticlesText}" 
+                    IsVisible="{Binding HasNewArticles}"
+                    Command="{Binding ShowNewArticlesCommand}"
+                    BackgroundColor="#1DA1F2" 
+                    TextColor="White" 
+                    FontAttributes="Bold"
+                    CornerRadius="20" 
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Start"
+                    Margin="0,20,0,0"
+                    Padding="15,10">
+                <Button.Shadow>
+                    <Shadow Brush="Black" Offset="0,4" Radius="8" Opacity="0.3" />
+                </Button.Shadow>
+            </Button>
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AuraNews.Views.ReaderPage" 
+             Title="Artikel"
+             BackgroundColor="#121212">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="20,30,20,50" Spacing="0" MaximumWidthRequest="700" HorizontalOptions="Center">
+
+                <Label Text="{Binding Title}" 
+                       FontSize="26" 
+                       FontAttributes="Bold" 
+                       TextColor="#F0F0F0" 
+                       LineHeight="1.3" 
+                       Margin="0,0,0,20" />
+
+                <BoxView HeightRequest="1" 
+                         Color="#2A2A2A" 
+                         HorizontalOptions="Fill" 
+                         Margin="0,0,0,25" />
+
+                <Label Text="{Binding Content}" 
+                       FontSize="18" 
+                       LineHeight="1.6" 
+                       TextColor="#CCCCCC" />
+
+                <Button Text="Original im Browser lesen" 
+                        Command="{Binding OpenOriginalCommand}"
+                        BackgroundColor="Transparent" 
+                        TextColor="DarkCyan"
+                        BorderColor="DarkCyan"
+                        BorderWidth="1.5"
+                        CornerRadius="25"
+                        Margin="0,40,0,0"
+                        Padding="15"
+                        FontAttributes="Bold" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Grid BackgroundColor="#A6121212" IsVisible="{Binding IsLoading}">
+            <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center" 
+                               Color="DarkCyan"
+                               Scale="1.2" />
+        </Grid>
+    </Grid>
+</ContentPage>

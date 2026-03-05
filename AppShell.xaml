@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="AuraNews.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:AuraNews.Views"
+    Title="AuraNews"
+    Shell.BackgroundColor="#121212"
+    Shell.ForegroundColor="White"
+    Shell.TitleColor="White"
+    Shell.TabBarBackgroundColor="#1E1E1E"
+    Shell.TabBarForegroundColor="White"
+    Shell.TabBarUnselectedColor="#888888">
+
+    <TabBar>
+        <ShellContent Title="Mein Feed" ContentTemplate="{DataTemplate views:FeedPage}" />
+        <ShellContent Title="Entdecken" ContentTemplate="{DataTemplate views:DiscoverPage}" />
+        <ShellContent Title="Mein Profil" ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </TabBar>
+
+</Shell>
